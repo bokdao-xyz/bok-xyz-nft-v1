@@ -13,22 +13,33 @@ contract BokDAONFTV1 is ERC721, ERC721URIStorage, Pausable, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     uint256 public constant maxSupply = 111;
-    uint256 public constant mintPrice = 0.001 ether;
-    // uint256 public constant mintPrice = 1.3 ether;
+    address public constant devFund =
+        0x16d2E836DFd8b362B7791C38238c9256CA9154E0;
+    uint256 public constant preMintPrice = 1.2 ether;
+    uint256 public constant mintPrice = 1.3 ether;
 
     event NewNFTMinted(address sender, uint256 tokenId);
 
-    constructor() ERC721("BokDaoNFTv1", "BokDaoNFTv1") {}
+    constructor() ERC721("BokDaoNFTv1", "BokDaoNFTv1") {
+        for (uint256 i = 1; i <= 27; i++) {
+            safeMint(devFund, "version1/metadata.json");
+        }
+    }
 
     function mintNFT() public payable {
-        // TODO: 운영지갑으로 변경
-        address devFund = address(0x619D27fd73359e689E3f08dAE7080cf04A7AC84c);
+        if (block.timestamp < 1673794799) {
+            require(msg.value == preMintPrice, "WRONG_PRICE");
+            (bool sent, ) = payable(devFund).call{value: msg.value}("");
+            require(sent, "Failed to send Ether");
 
-        require(msg.value == mintPrice, "WRONG_PRICE");
-        (bool sent, ) = payable(devFund).call{value: msg.value}("");
-        require(sent, "Failed to send Ether");
+            safeMint(msg.sender, "version1/metadata.json");
+        } else {
+            require(msg.value == mintPrice, "WRONG_PRICE");
+            (bool sent, ) = payable(devFund).call{value: msg.value}("");
+            require(sent, "Failed to send Ether");
 
-        safeMint(msg.sender, "version1/metadata.json");
+            safeMint(msg.sender, "version1/metadata.json");
+        }
     }
 
     function safeMint(address to, string memory uri) internal {

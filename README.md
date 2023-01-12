@@ -13,7 +13,7 @@ ETHERSCAN_KEY=
 
 ```
 npx hardhat run scripts/deploy.ts --network goerli
-npx hardhat run scripts/deploy.ts --network rinkeby
+npx hardhat run scripts/deploy.ts --network mainnet
 ```
 
 ## Get Verify
@@ -26,5 +26,5 @@ npx hardhat verify --network goerli ${contract address}
 ## Main-net
 
 ```
-
+0x276619746ef001707d20845f0c9eD609c077E9A5
 ```
